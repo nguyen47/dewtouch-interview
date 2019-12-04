@@ -1,21 +1,28 @@
 <?php
-	class FormatController extends AppController{
-		
-		public function q1(){
-			
-			$this->setFlash('Question: Please change Pop Up to mouse over (soft click)');
-				
-			
-// 			$this->set('title',__('Question: Please change Pop Up to mouse over (soft click)'));
-		}
-		
-		public function q1_detail(){
+class FormatController extends AppController
+{
+  public function q1()
+  {
+    $this->setFlash(
+      'Question: Please change Pop Up to mouse over (soft click)'
+    );
 
-			$this->setFlash('Question: Please change Pop Up to mouse over (soft click)');
-				
-			
-			
-// 			$this->set('title',__('Question: Please change Pop Up to mouse over (soft click)'));
-		}
-		
-	}
+    //$this->set('title',__('Question: Please change Pop Up to mouse over (soft click)'));
+  }
+
+  public function q1_detail()
+  {
+    $this->setFlash(
+      'Question: Please change Pop Up to mouse over (soft click)'
+    );
+
+    //$this->set('title',__('Question: Please change Pop Up to mouse over (soft click)'));
+  }
+
+  public function radioSelect()
+  {
+    $this->autoRender = false;
+    $selected = $this->params['data']['Type']['type'];
+    echo "You are select: $selected";
+  }
+}
