@@ -6,13 +6,17 @@ class RecordController extends AppController
     ini_set('memory_limit', '256M');
     set_time_limit(0);
 
-    $this->setFlash('Listing Record page too slow, try to optimize it.');
-
-    $records = $this->Record->find('all');
-
-    $this->set('records', $records);
+    $this->setFlash('Listing Record page is better now.');
 
     $this->set('title', __('List Record'));
+  }
+
+  public function getAjaxRecords()
+  {
+    $this->autoRender = false;
+    $offset = $this->params['url']['iDisplayStart'];
+    $records = $this->Record->getRecords($offset);
+    return $records;
   }
 
   // 		public function update(){
