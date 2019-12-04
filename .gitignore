@@ -6,3 +6,4 @@ app/webroot/upload
 app/tmp/*
 
 node_modules
+app/webroot/
