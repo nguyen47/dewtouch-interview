@@ -1,64 +1,81 @@
 <?php
-	class OrderReportController extends AppController{
+class OrderReportController extends AppController
+{
+  public function index()
+  {
+    $this->setFlash('Multidimensional Array.');
 
-		public function index(){
+    $this->loadModel('Order');
+    $orders = $this->Order->find('all', array(
+      'conditions' => array('Order.valid' => 1),
+      'recursive' => 2
+    ));
+    // debug($orders);exit;
 
-			$this->setFlash('Multidimensional Array.');
+    $this->loadModel('Portion');
+    $portions = $this->Portion->find('all', array(
+      'conditions' => array('Portion.valid' => 1),
+      'recursive' => 2
+    ));
+    // debug($portions);exit;
 
-			$this->loadModel('Order');
-			$orders = $this->Order->find('all',array('conditions'=>array('Order.valid'=>1),'recursive'=>2));
-			// debug($orders);exit;
+    // To Do - write your own array in this format
+    $order_reports = array();
+    foreach ($orders as $order) {
+      $orderName = $order['Order']['name'];
+      $order_reports[$orderName] = array();
+      foreach ($order['OrderDetail'] as $orderDetail) {
+        foreach ($portions as $portion) {
+          if ($orderDetail['Item']['name'] == $portion['Item']['name']) {
+            foreach ($portion['PortionDetail'] as $portionDetail) {
+              $ingredientName = $portionDetail['Part']['name'];
+              if (
+                array_key_exists($ingredientName, $order_reports[$orderName])
+              ) {
+                $addValue = $portionDetail['value'] * $orderDetail['quantity'];
+                $order_reports[$orderName][$ingredientName] += $addValue;
+              } else {
+                $inputValue =
+                  $portionDetail['value'] * $orderDetail['quantity'];
+                $order_reports[$orderName][$ingredientName] = $inputValue;
+              }
+            }
+          }
+        }
+      }
+    }
 
-			$this->loadModel('Portion');
-			$portions = $this->Portion->find('all',array('conditions'=>array('Portion.valid'=>1),'recursive'=>2));
-			// debug($portions);exit;
+    // ...
 
+    $this->set('order_reports', $order_reports);
 
-			// To Do - write your own array in this format
-			$order_reports = array('Order 1' => array(
-										'Ingredient A' => 1,
-										'Ingredient B' => 12,
-										'Ingredient C' => 3,
-										'Ingredient G' => 5,
-										'Ingredient H' => 24,
-										'Ingredient J' => 22,
-										'Ingredient F' => 9,
-									),
-								  'Order 2' => array(
-								  		'Ingredient A' => 13,
-								  		'Ingredient B' => 2,
-								  		'Ingredient G' => 14,
-								  		'Ingredient I' => 2,
-								  		'Ingredient D' => 6,
-								  	),
-								);
+    $this->set('title', __('Orders Report'));
+  }
 
-			// ...
+  public function Question()
+  {
+    $this->setFlash('Multidimensional Array.');
 
-			$this->set('order_reports',$order_reports);
+    $this->loadModel('Order');
+    $orders = $this->Order->find('all', array(
+      'conditions' => array('Order.valid' => 1),
+      'recursive' => 2
+    ));
 
-			$this->set('title',__('Orders Report'));
-		}
+    // debug($orders);exit;
 
-		public function Question(){
+    $this->set('orders', $orders);
 
-			$this->setFlash('Multidimensional Array.');
+    $this->loadModel('Portion');
+    $portions = $this->Portion->find('all', array(
+      'conditions' => array('Portion.valid' => 1),
+      'recursive' => 2
+    ));
 
-			$this->loadModel('Order');
-			$orders = $this->Order->find('all',array('conditions'=>array('Order.valid'=>1),'recursive'=>2));
+    // debug($portions);exit;
 
-			// debug($orders);exit;
+    $this->set('portions', $portions);
 
-			$this->set('orders',$orders);
-
-			$this->loadModel('Portion');
-			$portions = $this->Portion->find('all',array('conditions'=>array('Portion.valid'=>1),'recursive'=>2));
-				
-			// debug($portions);exit;
-
-			$this->set('portions',$portions);
-
-			$this->set('title',__('Question - Orders Report'));
-		}
-
-	}
+    $this->set('title', __('Question - Orders Report'));
+  }
+}
